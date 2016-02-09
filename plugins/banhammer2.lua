@@ -80,14 +80,14 @@ do
           unb_user(matches[2], chat_id)
           send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is unbned.')
         else
-          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (super)b list.')
+          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)b list.')
         end
       elseif matches[1] == 'sub' then
-        if is_super_bned(matches[2]) then
+        if is_s_bned(matches[2]) then
           sub_user(matches[2], chat_id)
           send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is globally unbned.')
         else
-          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (super)b list.')
+          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)b list.')
         end
       end
       if not group_member then
@@ -236,8 +236,8 @@ do
 	        user_id = msg.action.user.id
         end
         print('>>> bhammer : Checking invited user '..user_id)
-        if is_super_bned(user_id) or is_bned(user_id, chat_id) then
-          print('>>> bhammer : '..user_id..' is (super)bned from '..chat_id)
+        if is_s_bned(user_id) or is_bned(user_id, chat_id) then
+          print('>>> bhammer : '..user_id..' is (s)bned from '..chat_id)
           k_user(user_id, chat_id)
         end
       end
@@ -247,7 +247,7 @@ do
 
     -- bNED USER TALKING
     if is_chat_msg(msg) then
-      if is_super_bned(user_id) then
+      if is_s_bned(user_id) then
         print('>>> bhammer : sbned user talking!')
         sb_user(user_id, chat_id)
         msg.text = ''
