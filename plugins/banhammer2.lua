@@ -82,7 +82,7 @@ do
           send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)ban list.')
         end
       elseif matches[1] == 'sub' then
-        if is_s_banned(matches[2]) then
+        if is_s_banned(matches[2]), then
           sub_user(matches[2], chat_id)
           send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is globally unbanned.')
         else
