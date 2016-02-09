@@ -2,8 +2,8 @@
 do
 
   -- make sure to set with value that not higher than stats.lua
-  local NUM_MSG_MAX = 4  -- Max number of messages per TIME_CHECK seconds
-  local TIME_CHECK = 4
+  local NUM_MSG_MAX = 3  -- Max number of messages per TIME_CHECK seconds
+  local TIME_CHECK = 1
   local NO_k = 'I will not k myself, sudoers, admins or moderators!'
   local NO_BAN = 'I will not ban myself, sudoers, admins or moderators!'
   local NO_sban = 'I will not sban myself, sudoers, admins or moderators!'
