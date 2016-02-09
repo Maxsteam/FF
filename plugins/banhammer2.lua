@@ -1,4 +1,3 @@
--- data saved to moderation.json
 
 do
 
@@ -6,8 +5,8 @@ do
   local NUM_MSG_MAX = 4  -- Max number of messages per TIME_CHECK seconds
   local TIME_CHECK = 4
   local NO_k = 'I will not k myself, sudoers, admins or moderators!'
-  local NO_b = 'I will not b myself, sudoers, admins or moderators!'
-  local NO_sb = 'I will not sb myself, sudoers, admins or moderators!'
+  local NO_BAN = 'I will not ban myself, sudoers, admins or moderators!'
+  local NO_sban = 'I will not sban myself, sudoers, admins or moderators!'
 
   local function k_user(user_id, chat_id)
     -- check if user was ked in the last TIME_CHECK seconds
@@ -22,25 +21,25 @@ do
     redis:setex('ked:'..chat_id..':'..user_id, TIME_CHECK, 'true')
   end
 
-  local function b_user(user_id, chat_id)
+  local function ban_user(user_id, chat_id)
     -- Save to redis
-    redis:set('bned:'..chat_id..':'..user_id, true)
+    redis:set('banned:'..chat_id..':'..user_id, true)
     -- k from chat
     k_user(user_id, chat_id)
   end
 
-  local function sb_user(user_id, chat_id)
-    redis:set('sbned:'..user_id, true)
+  local function sban_user(user_id, chat_id)
+    redis:set('sbanned:'..user_id, true)
     k_user(user_id, chat_id)
   end
 
-  local function unb_user(user_id, chat_id)
-    redis:del('bned:'..chat_id..':'..user_id)
+  local function unban_user(user_id, chat_id)
+    redis:del('banned:'..chat_id..':'..user_id)
   end
 
-  local function sub_user(user_id, chat_id)
-    redis:del('sbned:'..user_id)
-    return 'User '..user_id..' unbned'
+  local function -sb_user(user_id, chat_id)
+    redis:del('sbanned:'..user_id)
+    return 'User '..user_id..' unbanned'
   end
 
   local function action_by_id(extra, success, result)
@@ -52,19 +51,19 @@ do
         if matches[2] == tostring(v.id) then
           group_member = true
           local full_name = (v.first_name or '')..' '..(v.last_name or '')
-          if matches[1] == 'b' then
+          if matches[1] == 'ban' then
             if is_mod(matches[2], chat_id) then
-              send_large_msg('chat#id'..chat_id, NO_b)
+              send_large_msg('chat#id'..chat_id, NO_BAN)
             else
-              b_user(matches[2], chat_id)
-              send_large_msg('chat#id'..chat_id, full_name..' ['..matches[2]..'] bned')
+              ban_user(matches[2], chat_id)
+              send_large_msg('chat#id'..chat_id, full_name..' ['..matches[2]..'] banned')
             end
-          elseif matches[1] == 'sb' then
+          elseif matches[1] == 'sban' then
             if is_mod(matches[2], chat_id) then
-              send_large_msg('chat#id'..chat_id, NO_sb)
+              send_large_msg('chat#id'..chat_id, NO_sban)
             else
-              sb_user(matches[2], chat_id)
-              send_large_msg('chat#id'..chat_id, full_name..' ['..matches[2]..'] globally bned!')
+              sban_user(matches[2], chat_id)
+              send_large_msg('chat#id'..chat_id, full_name..' ['..matches[2]..'] globally banned!')
             end
           elseif matches[1] == 'k' then
             if is_mod(matches[2], chat_id) then
@@ -75,19 +74,19 @@ do
           end
         end
       end
-      if matches[1] == 'unb' then
-        if is_bned(matches[2], chat_id) then
-          unb_user(matches[2], chat_id)
-          send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is unbned.')
+      if matches[1] == 'unban' then
+        if is_banned(matches[2], chat_id) then
+          unban_user(matches[2], chat_id)
+          send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is unbanned.')
         else
-          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)b list.')
+          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)ban list.')
         end
-      elseif matches[1] == 'sub' then
-        if is_s_bned(matches[2]) then
-          sub_user(matches[2], chat_id)
-          send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is globally unbned.')
+      elseif matches[1] == '-sb' then
+        if is_s_banned(matches[2]) then
+          -sb_user(matches[2], chat_id)
+          send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is globally unbanned.')
         else
-          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)b list.')
+          send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)ban list.')
         end
       end
       if not group_member then
@@ -107,25 +106,25 @@ do
         else
           k_user(user_id, chat_id)
         end
-      elseif extra.match == 'b' then
+      elseif extra.match == 'ban' then
         if is_mod(user_id, chat_id) then
-          send_large_msg('chat#id'..chat_id, NO_b)
+          send_large_msg('chat#id'..chat_id, NO_BAN)
         else
-          b_user(user_id, chat_id)
+          ban_user(user_id, chat_id)
         end
-      elseif extra.match == 'sb' then
+      elseif extra.match == 'sban' then
         if is_mod(user_id, chat_id) then
-          send_large_msg('chat#id'..chat_id, NO_sb)
+          send_large_msg('chat#id'..chat_id, NO_sban)
         else
-          sb_user(user_id, chat_id)
-          send_large_msg('chat#id'..chat_id, full_name..' ['..user_id..'] globally bned!')
+          sban_user(user_id, chat_id)
+          send_large_msg('chat#id'..chat_id, full_name..' ['..user_id..'] globally banned!')
         end
-      elseif extra.match == 'unb' then
-        unb_user(user_id, chat_id)
-        send_large_msg('chat#id'..chat_id, 'User '..user_id..' unbned')
-      elseif extra.match == 'sub' then
-        sub_user(user_id, chat_id)
-        send_large_msg('chat#id'..chat_id, full_name..' ['..user_id..'] globally unbned!')
+      elseif extra.match == 'unban' then
+        unban_user(user_id, chat_id)
+        send_large_msg('chat#id'..chat_id, 'User '..user_id..' unbanned')
+      elseif extra.match == '-sb' then
+        -sb_user(user_id, chat_id)
+        send_large_msg('chat#id'..chat_id, full_name..' ['..user_id..'] globally unbanned!')
       elseif extra.match == 'whitelist' then
         redis:set('whitelist:user#id'..user_id, true)
         send_large_msg('chat#id'..chat_id, full_name..' ['..user_id..'] whitelisted')
@@ -150,26 +149,26 @@ do
           else
             k_user(user_id, chat_id)
           end
-        elseif extra.match == 'b' then
+        elseif extra.match == 'ban' then
           if is_mod(user_id, chat_id) then
-            send_large_msg('chat#id'..chat_id, NO_b)
+            send_large_msg('chat#id'..chat_id, NO_BAN)
           else
-            b_user(user_id, chat_id)
-            send_large_msg('chat#id'..chat_id, 'User @'..username..' bned')
+            ban_user(user_id, chat_id)
+            send_large_msg('chat#id'..chat_id, 'User @'..username..' banned')
           end
-        elseif extra.match == 'sb' then
+        elseif extra.match == 'sban' then
           if is_mod(user_id, chat_id) then
-            send_large_msg('chat#id'..chat_id, NO_sb)
+            send_large_msg('chat#id'..chat_id, NO_sban)
           else
-            sb_user(user_id, chat_id)
-            send_large_msg('chat#id'..chat_id, 'User @'..username..' ['..user_id..'] globally bned!')
+            sban_user(user_id, chat_id)
+            send_large_msg('chat#id'..chat_id, 'User @'..username..' ['..user_id..'] globally banned!')
           end
-        elseif extra.match == 'unb' then
-          unb_user(user_id, chat_id)
-          send_large_msg('chat#id'..chat_id, 'User @'..username..' unbned', ok_cb,  true)
-        elseif extra.match == 'sub' then
-          sub_user(user_id, chat_id)
-          send_large_msg('chat#id'..chat_id, 'User @'..username..' ['..user_id..'] globally unbned!')
+        elseif extra.match == 'unban' then
+          unban_user(user_id, chat_id)
+          send_large_msg('chat#id'..chat_id, 'User @'..username..' unbanned', ok_cb,  true)
+        elseif extra.match == '-sb' then
+          -sb_user(user_id, chat_id)
+          send_large_msg('chat#id'..chat_id, 'User @'..username..' ['..user_id..'] globally unbanned!')
         end
       else
         return 'Use This in Your Groups.'
@@ -185,9 +184,9 @@ do
     if anti_spam_stat == 'k' then
       k_user(user_id, chat_id)
       send_large_msg('chat#id'..chat_id, 'User '..user_id..' is '..splooder)
-    elseif anti_spam_stat == 'b' then
-      b_user(user_id, chat_id)
-      send_large_msg('chat#id'..chat_id, 'User '..user_id..' is '..splooder..'. bned')
+    elseif anti_spam_stat == 'ban' then
+      ban_user(user_id, chat_id)
+      send_large_msg('chat#id'..chat_id, 'User '..user_id..' is '..splooder..'. Banned')
     end
     msg = nil
   end
@@ -228,16 +227,16 @@ do
     -- SERVICE MESSAGE
     if msg.action and msg.action.type then
       local action = msg.action.type
-      -- Check if bned user joins chat
+      -- Check if banned user joins chat
       if action == 'chat_add_user' or action == 'chat_add_user_link' then
         if msg.action.link_issuer then
           user_id = msg.from.id
         else
 	        user_id = msg.action.user.id
         end
-        print('>>> bhammer : Checking invited user '..user_id)
-        if is_s_bned(user_id) or is_bned(user_id, chat_id) then
-          print('>>> bhammer : '..user_id..' is (s)bned from '..chat_id)
+        print('>>> banhammer : Checking invited user '..user_id)
+        if is_s_banned(user_id) or is_banned(user_id, chat_id) then
+          print('>>> banhammer : '..user_id..' is (s)banned from '..chat_id)
           k_user(user_id, chat_id)
         end
       end
@@ -245,15 +244,15 @@ do
       return msg
     end
 
-    -- bNED USER TALKING
+    -- BANNED USER TALKING
     if is_chat_msg(msg) then
-      if is_s_bned(user_id) then
-        print('>>> bhammer : sbned user talking!')
-        sb_user(user_id, chat_id)
+      if is_s_banned(user_id) then
+        print('>>> banhammer : sbanned user talking!')
+        sban_user(user_id, chat_id)
         msg.text = ''
-      elseif is_bned(user_id, chat_id) then
-        print('>>> bhammer : bned user talking!')
-        b_user(user_id, chat_id)
+      elseif is_banned(user_id, chat_id) then
+        print('>>> banhammer : Banned user talking!')
+        ban_user(user_id, chat_id)
         msg.text = ''
       end
     end
@@ -261,11 +260,11 @@ do
     -- WHITELIST
     -- Allow all sudo users even if whitelist is allowed
     if redis:get('whitelist:enabled') and not is_sudo(user_id) then
-      print('>>> bhammer : Whitelist enabled and not sudo')
+      print('>>> banhammer : Whitelist enabled and not sudo')
       -- Check if user or chat is whitelisted
       local allowed = redis:get('whitelist:user#id'..user_id) or false
       if not allowed then
-        print('>>> bhammer : User '..user_id..' not whitelisted')
+        print('>>> banhammer : User '..user_id..' not whitelisted')
         if is_chat_msg(msg) then
           allowed = redis:get('whitelist:chat#id'..chat_id) or false
           if not allowed then
@@ -275,7 +274,7 @@ do
           end
         end
       else
-        print('>>> bhammer : User '..user_id..' allowed :)')
+        print('>>> banhammer : User '..user_id..' allowed :)')
       end
 
       if not allowed then
@@ -283,7 +282,7 @@ do
       end
 
     else
-      print('>>> bhammer : Whitelist not enabled or is sudo')
+      print('>>> banhammer : Whitelist not enabled or is sudo')
     end
 
     return msg
@@ -310,7 +309,7 @@ do
           elseif string.match(matches[2], '^@.+$') then
             msgr = res_user(string.gsub(matches[2], '@', ''), resolve_username, {msg=msg, match=matches[1]})
           end
-        elseif matches[1] == 'b' then
+        elseif matches[1] == 'ban' then
           if msg.reply_id then
             msgr = get_message(msg.reply_id, action_by_reply, {msg=msg, match=matches[1]})
           elseif string.match(matches[2], '^%d+$') then
@@ -318,13 +317,13 @@ do
           elseif string.match(matches[2], '^@.+$') then
             msgr = res_user(string.gsub(matches[2], '@', ''), resolve_username, {msg=msg, match=matches[1]})
           end
-        elseif matches[1] == 'bl' then
-          local text = 'b list for '..msg.to.title..' ['..msg.to.id..']:\n\n'
-          for k,v in pairs(redis:keys('bned:'..msg.to.id..':*')) do
+        elseif matches[1] == 'banlist' then
+          local text = 'Ban list for '..msg.to.title..' ['..msg.to.id..']:\n\n'
+          for k,v in pairs(redis:keys('banned:'..msg.to.id..':*')) do
             text = text..k..'. '..v..'\n'
           end
-          return string.gsub(text, 'bned:'..msg.to.id..':', '')
-        elseif matches[1] == 'unb' then
+          return string.gsub(text, 'banned:'..msg.to.id..':', '')
+        elseif matches[1] == 'unban' then
           if msg.reply_id then
             msgr = get_message(msg.reply_id, action_by_reply, {msg=msg, match=matches[1]})
           elseif string.match(matches[2], '^%d+$') then
@@ -343,12 +342,12 @@ do
             end
               return 'Anti flood and spam protection already enabled.\nOffender will be ked.'
             end
-          if matches[2] == 'b' then
-            if settings.anti_flood ~= 'b' then
-              settings.anti_flood = 'b'
+          if matches[2] == 'ban' then
+            if settings.anti_flood ~= 'ban' then
+              settings.anti_flood = 'ban'
               save_data(_config.moderation.data, data)
             end
-              return 'Anti flood and spam protection already enabled.\nOffender will be bned.'
+              return 'Anti flood and spam protection already enabled.\nOffender will be banned.'
             end
           if matches[2] == 'disable' then
             if settings.anti_flood == 'no' then
@@ -388,7 +387,7 @@ do
         end
       end
       if is_admin(msg.from.id, msg.to.id) then
-        if matches[1] == 'sb' then
+        if matches[1] == 'sban' then
           if msg.reply_id then
             msgr = get_message(msg.reply_id, action_by_reply, {msg=msg, match=matches[1]})
           elseif string.match(matches[2], '^%d+$') then
@@ -396,7 +395,7 @@ do
           elseif string.match(matches[2], '^@.+$') then
             msgr = res_user(string.gsub(matches[2], '@', ''), resolve_username, {msg=msg, match=matches[1]})
           end
-        elseif matches[1] == 'sub' then
+        elseif matches[1] == '-sb' then
           if msg.reply_id then
             msgr = get_message(msg.reply_id, action_by_reply, {msg=msg, match=matches[1]})
           elseif string.match(matches[2], '^%d+$') then
@@ -412,26 +411,26 @@ do
   end
 
   return {
-    description = 'Plugin to manage bs, ks and white/black lists.',
+    description = 'Plugin to manage bans, ks and white/black lists.',
     usage = {
       user = {
         '!kme : k yourself out of this group.'
       },
       admin = {
-        '!sb : If type in reply, will b user globally.',
-        '!sb <user_id>/@<username> : k user_id/username from all chat and ks it if joins again',
-        '!sub : If type in reply, will unb user globally.',
-        '!sub <user_id>/@<username> : Unb user_id/username globally.'
+        '!sban : If type in reply, will ban user globally.',
+        '!sban <user_id>/@<username> : k user_id/username from all chat and ks it if joins again',
+        '!-sb : If type in reply, will unban user globally.',
+        '!-sb <user_id>/@<username> : Unban user_id/username globally.'
       },
       moderator = {
         '!antispam k : Enable flood and spam protection. Offender will be ked.',
-        '!antispam b : Enable flood and spam protection. Offender will be bned.',
+        '!antispam ban : Enable flood and spam protection. Offender will be banned.',
         '!antispam disable : Disable flood and spam protection',
-        '!b : If type in reply, will b user from chat group.',
-        '!b <user_id>/<@username>: k user from chat and ks it if joins chat again',
-        '!bl : List users bned from chat group.',
-        '!unb : If type in reply, will unb user from chat group.',
-        '!unb <user_id>/<@username>: Unb user',
+        '!ban : If type in reply, will ban user from chat group.',
+        '!ban <user_id>/<@username>: k user from chat and ks it if joins chat again',
+        '!banlist : List users banned from chat group.',
+        '!unban : If type in reply, will unban user from chat group.',
+        '!unban <user_id>/<@username>: Unban user',
         '!k : If type in reply, will k user from chat group.',
         '!k <user_id>/<@username>: k user from chat group',
         '!whitelist : If type in reply, allow user to use the bot when whitelist mode is enabled',
@@ -445,11 +444,11 @@ do
     },
     patterns = {
       '^!(antispam) (.*)$',
-      '^!(b) (.*)$',
-      '^!(b)$',
-      '^!(bl)$',
-      '^!(unb) (.*)$',
-      '^!(unb)$',
+      '^!(ban) (.*)$',
+      '^!(ban)$',
+      '^!(banlist)$',
+      '^!(unban) (.*)$',
+      '^!(unban)$',
       '^!(k) (.+)$',
       '^!(k)$',
       '^!(kme)$',
@@ -462,10 +461,10 @@ do
       '^!(whitelist) (enable)$',
       '^!(whitelist) (user) (%d+)$',
       '^!(unwhitelist)$',
-      '^!(sb)$',
-      '^!(sb) (.*)$',
-      '^!(sub)$',
-      '^!(sub) (.*)$'
+      '^!(sban)$',
+      '^!(sban) (.*)$',
+      '^!(-sb)$',
+      '^!(-sb) (.*)$'
     },
     run = run,
     pre_process = pre_process
