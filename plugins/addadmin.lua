@@ -4,8 +4,8 @@ local function callback(extra, success, result)
     cardump(result)
 end
     function run(msg, matches)
-        if not is_momod or not is_owner then
-    return "Only Onwers Can Add WilSoN!"
+        if not is_mod or not is_sudo then
+    return "Only Onwers Can Add Bad Boy or Amir epika!"
 end
     local user = 'user#id'
     local chat = 'chat#id'..msg.to.id
