@@ -1,19 +1,10 @@
 local function run(msg)
-if msg.text == "max" then
-	return " جونم ؟ چی شده؟"
+if msg.text == "امیر" then
+	return "با بابایی جونم چیکار داری؟"
 end
 if msg.text == "MAX" then
 	return "بله ، کاری داری ؟"
 end
-if msg.text == "امیر" then
-	return "با باباییم چیکار داری؟"
-	end
-	if msg.text == "بدبوی" then
-	return "با باباییم چیکار داری؟"
-	end
-	if msg.text == "bad boy" then
-	return "با باباییم چیکار داری؟"
-	ثدی
 if msg.text == "hi" then
 	return "سلام...  اگه میشه فارسی تایپ کن"
 end
@@ -26,81 +17,62 @@ end
 if msg.text == "salam" then
 	return "و علیکومو سلام ، فارسی تایپ کن لطفا"
 end
-if msg.text == "bashe" then
+if msg.text == "باشــه" then
 	return "تکون نخور لاشه"
 end
-if msg.text == "Bashe" then
+if msg.text == "باشه" then
 	return "بشین چشات وا شه"
 end
 if msg.text == "bot" then
 	return "بله ؟"
 end
-if msg.text == "sik :D" then
-	return " مودب باش رباتِ بی تلبیت"
+if msg.text == "محی" then
+	return "با عمو جونم چیکار داری اخه؟"
 end
-if msg.text == "kooni" then
+if msg.text == "کونی" then
 	return "فحش نده"
 end
-if msg.text == "suck it" then
-	return "مودب باش"
+if msg.text == "محمد" then
+	return ""عموی من و داداش بابام بد بوی هستش چیکارش داری؟
 end
-if msg.text == "Bad boy" then
-	return "با باباییم چیکارداری؟"
+if msg.text == "بدبوی" then
+	return "بابایی جونم چیکار داری؟
 end
 if msg.text == "bye" then
-	return "بای عشقم"
+	return "بابای"
 end
 if msg.text == "Bye" then
-	return "بای"
+	return "بســــــــــلامت"
 end
 if msg.text == "گه نخور" then
-        return "باشه چشم ولی تو حتما بخور"
+        return "ولی تو بخور خوبه برات😜"
 end
 if msg.text == "کس ننت" then
-	return "با مِیمَنَت ، اینم سند ، تو شرتو کرستِ ننت"
+	return "کــــــیر اقــــام دســـت ننـــــــت
 end
 if msg.text == "ببخشید" then
-	return "خدا ببخشه"
-end
-if msg.text == "سیکتیر" then
-	return "ناخن گیر کفگیر دزدگیر سیکتیر کس ننت"
+	return  "تبـــــــریز مال شمـــــا 👅"
 end
 if msg.text == "بای" then
-        return "خدافظ ، مراقب زیباییات باش."
+        return "😁بری دیگه برنگردی"
 end
 if msg.text == "کسکش" then
-        return "فحش نده 😡"
+        return "فحش نده 😡😡"
 end
 if msg.text == "سلام" then
         return "سلام عزیزم 🌷"
 end
-if msg.text == "یه دختر و یه پسر" then
-	return "خب مبارکه شیرینیش کو"
+if msg.text == "amir then
+        return "با بابایی جونم چیکار داری؟ 😐"
 end
-if msg.text == "میتونی بخوری؟" then
-	return "نه متاسفانه من رباتم"
-end
-if msg.text == "باشه" then
-	return "یه وری بخواب جاشه"
-end
-if msg.text == "بی ادب" then
-	return "عمته"
-end
-
 if msg.text == "Amir" then
-        return "بابابایم چیکار داری؟"
-end
-if msg.text == "amir" then
-        return "باباییم چیکار داری؟"
+        return "😐با بابایی جونم چیکار داری؟"
 end
 if msg.text == "mohammad" then
-        return "با عموم چکار داری ؟"
+        return "با عمو جونم چیکار داری؟ 😐"
 end
 if msg.text == "Mohammad" then
         return "با عموم چکار داری ؟"
-end
-if msg.text == "ببخشید" then
-	return "تبریز مــــال تو"
 end
 end
 
@@ -109,29 +81,26 @@ return {
 	usage = "chat with robot",
 	patterns = {
 		"^[Hh]ello$",
+		"^MAX$",
 		"^[Bb]ot$",
 		"^[Bb]ye$",
-		"^?$",
+		"^باشــه$",
 		"^[Ss]alam$",
                 "^[Gg]oh nakhor$",
-                "^sik :D$",
-                "^[Bb]ashe$",
+                "^محی$",
+                "^باشه$",
+                "^امیر",
                 "^بدبوی$",
-				"^میتونی بخوری؟$",
-                "^[Bb]ad boy$",
                 "^[Mm]ohammad$",
                 "^گه نخور$",
                 "^ربات$",
-				"^یه دختر و یه پسر$",
-				"^بی ادب$",
                 "^کس ننت$",
-				"^سیکتیر$",
                 "^ببخشید$",
                 "^بای$",
                 "^کسکش$",
                 "^سلام$",
-                "^امیر$",
-                "^َ[Aa]mir$",
+                "^محمد",
+                "^[Aa]mir",
 		}, 
 	run = run,
     --privileged = true,
