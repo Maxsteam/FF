@@ -37,7 +37,7 @@ do
     redis:del('banned:'..chat_id..':'..user_id)
   end
 
-  local function -sb_user(user_id, chat_id)
+  local function sub_user(user_id, chat_id)
     redis:del('sbanned:'..user_id)
     return 'User '..user_id..' unbanned'
   end
@@ -81,9 +81,9 @@ do
         else
           send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)ban list.')
         end
-      elseif matches[1] == '-sb' then
+      elseif matches[1] == 'sub' then
         if is_s_banned(matches[2]) then
-          -sb_user(matches[2], chat_id)
+          sub_user(matches[2], chat_id)
           send_large_msg('chat#id'..chat_id, 'User with ID ['..matches[2]..'] is globally unbanned.')
         else
           send_large_msg('chat#id'..chat_id, 'No user with ID '..matches[2]..' in (s)ban list.')
@@ -122,8 +122,8 @@ do
       elseif extra.match == 'unban' then
         unban_user(user_id, chat_id)
         send_large_msg('chat#id'..chat_id, 'User '..user_id..' unbanned')
-      elseif extra.match == '-sb' then
-        -sb_user(user_id, chat_id)
+      elseif extra.match == 'sub' then
+        sub_user(user_id, chat_id)
         send_large_msg('chat#id'..chat_id, full_name..' ['..user_id..'] globally unbanned!')
       elseif extra.match == 'whitelist' then
         redis:set('whitelist:user#id'..user_id, true)
@@ -166,8 +166,8 @@ do
         elseif extra.match == 'unban' then
           unban_user(user_id, chat_id)
           send_large_msg('chat#id'..chat_id, 'User @'..username..' unbanned', ok_cb,  true)
-        elseif extra.match == '-sb' then
-          -sb_user(user_id, chat_id)
+        elseif extra.match == 'sub' then
+          sub_user(user_id, chat_id)
           send_large_msg('chat#id'..chat_id, 'User @'..username..' ['..user_id..'] globally unbanned!')
         end
       else
@@ -395,7 +395,7 @@ do
           elseif string.match(matches[2], '^@.+$') then
             msgr = res_user(string.gsub(matches[2], '@', ''), resolve_username, {msg=msg, match=matches[1]})
           end
-        elseif matches[1] == '-sb' then
+        elseif matches[1] == 'sub' then
           if msg.reply_id then
             msgr = get_message(msg.reply_id, action_by_reply, {msg=msg, match=matches[1]})
           elseif string.match(matches[2], '^%d+$') then
@@ -419,8 +419,8 @@ do
       admin = {
         '!sban : If type in reply, will ban user globally.',
         '!sban <user_id>/@<username> : k user_id/username from all chat and ks it if joins again',
-        '!-sb : If type in reply, will unban user globally.',
-        '!-sb <user_id>/@<username> : Unban user_id/username globally.'
+        '!sub : If type in reply, will unban user globally.',
+        '!sub <user_id>/@<username> : Unban user_id/username globally.'
       },
       moderator = {
         '!antispam k : Enable flood and spam protection. Offender will be ked.',
@@ -463,8 +463,8 @@ do
       '^!(unwhitelist)$',
       '^!(sban)$',
       '^!(sban) (.*)$',
-      '^!(-sb)$',
-      '^!(-sb) (.*)$'
+      '^!(sub)$',
+      '^!(sub) (.*)$'
     },
     run = run,
     pre_process = pre_process
